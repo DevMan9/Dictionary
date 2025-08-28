@@ -15,7 +15,7 @@ void DictionaryAdd(struct Dictionary *dictionary, char *key, void *value);
 // Gets the value associated with the given key in the dictionary.
 void DictionaryGet(struct Dictionary *dictionary, char *key, void **ret);
 
-// Removes the
+// Removes the value associated with the given key.
 void DictionaryRemove(struct Dictionary *dictionary, char *key, void **ret);
 
 #endif // STANDARD_DICTIONARY_X_0
