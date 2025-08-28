@@ -10,7 +10,7 @@ struct CharacterNode
 {
     struct CharacterNode *parent;
     struct CharacterNode *children[256];
-    char *value;
+    void *value;
 };
 
 struct Dictionary
@@ -40,22 +40,20 @@ static void _DestroyCharacterNode(struct CharacterNode **character_node_address)
             _DestroyCharacterNode(&(node->children[i]));
         }
     }
-    free(node->value);
     free(node);
     (*character_node_address) = NULL;
 skip:
     return;
 }
 
-static void _CharacterNodeSetValue(struct CharacterNode *character_node, char *value)
+static void _CharacterNodeSetValue(struct CharacterNode *character_node, void *value)
 {
-    free(character_node->value);
-    character_node->value = strdup(value);
+    character_node->value = value;
 }
 
-static void _CharacterNodeGetValue(struct CharacterNode *character_node, char **ret)
+static void _CharacterNodeGetValue(struct CharacterNode *character_node, void **ret)
 {
-    (*ret) = strdup(character_node->value);
+    (*ret) = character_node->value;
 }
 
 void CreateDictionary(struct Dictionary **ret)
@@ -115,14 +113,14 @@ end:
     return;
 }
 
-void DictionaryAdd(struct Dictionary *dictionary, char *key, char *value)
+void DictionaryAdd(struct Dictionary *dictionary, char *key, void *value)
 {
     struct CharacterNode *character_node = NULL;
     _DictionaryNavigate(dictionary, key, BUILD, &character_node);
     _CharacterNodeSetValue(character_node, value);
 }
 
-void DictionaryGet(struct Dictionary *dictionary, char *key, char **ret)
+void DictionaryGet(struct Dictionary *dictionary, char *key, void **ret)
 {
     struct CharacterNode *character_node = NULL;
     _DictionaryNavigate(dictionary, key, NONE, &character_node);
@@ -136,7 +134,7 @@ void DictionaryGet(struct Dictionary *dictionary, char *key, char **ret)
     }
 }
 
-void DictionaryRemove(struct Dictionary *dictionary, char *key, char **ret)
+void DictionaryRemove(struct Dictionary *dictionary, char *key, void **ret)
 {
     struct CharacterNode *character_node = NULL;
     _DictionaryNavigate(dictionary, key, NONE, &character_node);
@@ -148,8 +146,6 @@ void DictionaryRemove(struct Dictionary *dictionary, char *key, char **ret)
 again:
     if (character_node)
     {
-        free(character_node->value);
-        character_node->value = NULL;
         int has_child = 0;
         for (int i = 0; i < 256; i++)
         {
